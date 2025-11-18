@@ -3,9 +3,7 @@
 	import { browser } from '$app/environment';
 	import type * as L from 'leaflet';
 
-	import { goto } from '$app/navigation';
-	import { createClient } from '@supabase/supabase-js';
-	import type { Database } from '$lib/database.types';
+	// Removed unused imports - logout now handled via server action
 
 	import type { jsPDF } from 'jspdf';
 
@@ -31,11 +29,9 @@
 		fillOpacity: 0.7
 	};
 
-	async function handleLogout() {
-		const supabase = createClient<Database>(data.supabaseUrl, data.supabaseKey);
-		const { error } = await supabase.auth.signOut();
-		if (error) console.error('Error logging out:', error.message);
-		goto('/login');
+	function handleLogout() {
+		// Navigate to logout page for proper server-side logout
+		window.location.href = '/logout';
 	}
 
 	function toggleCountry(countryName: string) {
