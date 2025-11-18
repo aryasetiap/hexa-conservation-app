@@ -11,38 +11,44 @@
 
 	let mapInstance = $state<L.Map | null>(null);
 	let geoJsonLayer = $state<L.GeoJSON | null>(null);
+
 	let selectedCountries = $state(new Set<string>());
 	let countryLayers = $state<{ [key: string]: L.Layer }>({});
 
 	const defaultStyle = {
-		color: '#00008b',
+		color: '#00008b', // Dark border
 		weight: 1,
-		fillColor: '#add8e6',
+		fillColor: '#add8e6', // Light blue fill
 		fillOpacity: 0.5
 	};
 	const highlightStyle = {
-		color: '#ff7800',
+		color: '#ff7800', // Border oranye
 		weight: 3,
-		fillColor: '#ffed4e',
+		fillColor: '#ffed4e', // Fill kuning
 		fillOpacity: 0.7
 	};
 
 	async function handleLogout() {
 		const supabase = createClient<Database>(data.supabaseUrl, data.supabaseKey);
+
 		const { error } = await supabase.auth.signOut();
+
 		if (error) {
 			console.error('Error logging out:', error.message);
 		}
+
 		goto('/login');
 	}
 
 	function toggleCountry(countryName: string) {
 		const newSet = new Set(selectedCountries);
+
 		if (newSet.has(countryName)) {
 			newSet.delete(countryName);
 		} else {
 			newSet.add(countryName);
 		}
+
 		selectedCountries = newSet;
 	}
 
@@ -52,6 +58,7 @@
 			try {
 				const leafletModule = await import('leaflet');
 				L = leafletModule.default || leafletModule;
+
 				await import('leaflet/dist/leaflet.css');
 
 				delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -80,7 +87,7 @@
 		if (browser && mapInstance && data.geojson) {
 			import('leaflet').then((L) => {
 				if (geoJsonLayer) {
-					// Kita juga harus cek di sini
+					// Tambahkan pengecekan 'mapInstance' untuk TypeScript
 					if (mapInstance) {
 						mapInstance.removeLayer(geoJsonLayer);
 					}
@@ -121,10 +128,11 @@
 
 		for (const countryName in countryLayers) {
 			const layer = countryLayers[countryName] as L.Path;
+
 			if (layer && typeof layer.setStyle === 'function') {
 				if (selectedCountries.has(countryName)) {
 					layer.setStyle(highlightStyle);
-					layer.bringToFront();
+					layer.bringToFront(); // Bawa ke depan agar bordernya terlihat
 				} else {
 					layer.setStyle(defaultStyle);
 				}
@@ -157,6 +165,7 @@
 				{#if data.countries && data.countries.length === 0}
 					<p class="p-4 text-center text-sm text-gray-500">Tidak ada negara ditemukan.</p>
 				{/if}
+
 				{#each data.countries as country (country)}
 					<button
 						type="button"
