@@ -1,38 +1,123 @@
-# sv
+# Hexa Conservation - Aplikasi Peta Negara Dunia
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Aplikasi SvelteKit yang menampilkan poligon negara dunia pada peta interaktif dengan autentikasi Supabase dan fitur ekspor PDF.
 
-## Creating a project
+## 🌟 Fitur
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Peta Dunia Interaktif**: Menampilkan semua negara dengan poligon yang dapat diklik
+- **Seleksi Negara**: Pilih negara dari peta atau daftar di sidebar
+- **Ekspor PDF**: Buat laporan PDF berisi negara terpilih dan data sesi pengguna
+- **Autentikasi Supabase**: Sistem login email/password yang aman
+- **Desain Responsif**: Antarmuka ramah mobile dengan TailwindCSS
 
-```sh
-# create a new project in the current directory
-npx sv create
+## 🛠 Teknologi
 
-# create a new project in my-app
-npx sv create my-app
+- **Frontend**: SvelteKit 2 dengan Svelte 5 (runes syntax)
+- **Styling**: TailwindCSS
+- **Autentikasi & Database**: Supabase
+- **Pemetaan**: Leaflet
+- **Pembuatan PDF**: jsPDF
+- **Runtime**: Bun
+- **Sumber Data**: [DataHub GeoJSON Countries](https://datahub.io/core/geo-countries/r/countries.geojson)
+
+## 📋 Prasyarat
+
+- Bun runtime terpasang
+- Akun Supabase (tier gratis)
+- Git
+
+## 🚀 Instruksi Instalasi
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/aryasetiap/hexa-conservation-app.git
+cd hexa-conservation-app
 ```
 
-## Developing
+### 2. Instalasi Dependensi
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```bash
+bun install
 ```
 
-## Building
+### 3. Setup Supabase
 
-To create a production version of your app:
+1. Buat proyek baru di [supabase.com](https://supabase.com)
+2. Masuk ke Project Settings → API
+3. Salin URL proyek dan anon key Anda
+4. Di pengaturan Authentication, aktifkan provider email/password
+5. Buat user uji coba di Authentication → Users (form sign-up belum tersedia)
 
-```sh
-npm run build
+### 4. Konfigurasi Environment
+
+Buat file `.env.local` di root proyek:
+
+```env
+PUBLIC_SUPABASE_URL=your_supabase_project_url
+PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-You can preview the production build with `npm run preview`.
+### 5. Jalankan Server Development
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```bash
+bun run dev
+```
+
+Aplikasi dapat diakses di `http://localhost:5173`
+
+## 📚 Library yang Digunakan
+
+- **@supabase/supabase-js**: Client Supabase
+- **leaflet**: Library peta interaktif
+- **jspdf**: Pembuatan PDF
+- **tailwindcss**: Framework CSS utility-first
+
+## 🎯 Persyaratan Fungsional Terpenuhi
+
+- ✅ **Autentikasi**: Login email/password via Supabase
+- ✅ **Peta Dunia**: Poligon negara interaktif dari API GeoJSON
+- ✅ **Seleksi Negara**: Klik negara di peta atau pilih dari sidebar
+- ✅ **Ekspor PDF**: Buat laporan dengan data user dan negara terpilih
+- ✅ **Manajemen Sesi**: Logout dan pengelolaan sesi yang aman
+
+## 🚀 Build Produksi
+
+```bash
+bun run build
+bun run preview
+```
+
+## 🔧 Perintah Pengembangan
+
+```bash
+# Jalankan server development
+bun run dev
+
+# Build untuk produksi
+bun run build
+
+# Preview build produksi
+bun run preview
+
+# Jalankan linting
+bun run lint
+
+# Format kode
+bun run format
+```
+
+## 📝 Variabel Environment yang Dibutuhkan
+
+```env
+PUBLIC_SUPABASE_URL=your_supabase_project_url
+PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## 🎮 Cara Penggunaan
+
+1. **Login**: Gunakan kredensial Supabase yang sudah dibuat
+2. **Eksplorasi Peta**: Klik negara untuk memilih
+3. **Gunakan Sidebar**: Telusuri dan pilih negara dari daftar
+4. **Ekspor PDF**: Klik "Download as PDF" untuk membuat laporan
+5. **Logout**: Klik tombol logout untuk keluar
