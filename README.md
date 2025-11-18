@@ -2,6 +2,28 @@
 
 Aplikasi SvelteKit yang menampilkan poligon negara dunia pada peta interaktif dengan autentikasi Supabase dan fitur ekspor PDF.
 
+## 📸 Screenshot
+
+### Halaman Login
+
+![Login Page](/screenshot/login.png)
+_Halaman autentikasi dengan Supabase - masukkan email dan password untuk mengakses aplikasi_
+
+### Peta Interaktif - Negara Terpilih
+
+![Selected Countries](screenshot/selected-country.png)
+_Peta dunia dengan negara terpilih (Canada dan Russia) ditandai dengan warna oranye/kuning_
+
+### Peta Interaktif - Tanpa Seleksi
+
+![No Selection](screenshot/map.png)
+_Tampilan awal peta dunia dengan semua negara dalam warna biru, siap untuk dipilih_
+
+### Fitur Ekspor PDF
+
+![PDF Export](screenshot/download-pdf.png)
+_Dialog save file saat mengunduh laporan PDF dengan data negara terpilih_
+
 ## 🌟 Fitur
 
 - **Peta Dunia Interaktif**: Menampilkan semua negara dengan poligon yang dapat diklik
