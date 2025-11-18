@@ -7,49 +7,125 @@
 	import { createClient } from '@supabase/supabase-js';
 	import type { Database } from '$lib/database.types';
 
+	import type { jsPDF } from 'jspdf';
+
 	let { data } = $props();
 
 	let mapInstance = $state<L.Map | null>(null);
 	let geoJsonLayer = $state<L.GeoJSON | null>(null);
-
 	let selectedCountries = $state(new Set<string>());
 	let countryLayers = $state<{ [key: string]: L.Layer }>({});
 
+	let isGeneratingPdf = $state(false);
+
 	const defaultStyle = {
-		color: '#00008b', // Dark border
+		color: '#00008b',
 		weight: 1,
-		fillColor: '#add8e6', // Light blue fill
+		fillColor: '#add8e6',
 		fillOpacity: 0.5
 	};
 	const highlightStyle = {
-		color: '#ff7800', // Border oranye
+		color: '#ff7800',
 		weight: 3,
-		fillColor: '#ffed4e', // Fill kuning
+		fillColor: '#ffed4e',
 		fillOpacity: 0.7
 	};
 
 	async function handleLogout() {
 		const supabase = createClient<Database>(data.supabaseUrl, data.supabaseKey);
-
 		const { error } = await supabase.auth.signOut();
-
-		if (error) {
-			console.error('Error logging out:', error.message);
-		}
-
+		if (error) console.error('Error logging out:', error.message);
 		goto('/login');
 	}
 
 	function toggleCountry(countryName: string) {
 		const newSet = new Set(selectedCountries);
-
 		if (newSet.has(countryName)) {
 			newSet.delete(countryName);
 		} else {
 			newSet.add(countryName);
 		}
-
 		selectedCountries = newSet;
+	}
+
+	async function downloadPDF() {
+		isGeneratingPdf = true;
+
+		let doc: jsPDF | null = null;
+
+		try {
+			const { default: jsPDF } = await import('jspdf');
+
+			doc = new jsPDF('p', 'mm', 'a4');
+
+			const userEmail = data.session?.user?.email || 'Tidak diketahui';
+			const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+			const allCountries = data.countries; // Sudah diurutkan dari +page.ts
+			const selectedArray = Array.from(selectedCountries).sort();
+
+			const leftMargin = 14;
+			const pageTopMargin = 20;
+			const pageBottomMargin = 283; // A4 (297mm) - margin 14mm
+			const lineHeight = 7; // Ketinggian per baris
+			let y = pageTopMargin; // Posisi Y saat ini
+
+			doc.setFontSize(18);
+			doc.text('Laporan Negara - Hexa Conservation', leftMargin, y);
+			y += 10; // Pindah ke bawah
+
+			doc.setFontSize(12);
+			doc.text(`Email Pengguna: ${userEmail}`, leftMargin, y);
+			y += lineHeight;
+			doc.text(`Waktu Laporan: ${timestamp} WIB`, leftMargin, y);
+			y += lineHeight;
+			doc.text(`Jumlah Total Negara: ${allCountries.length}`, leftMargin, y);
+			y += lineHeight;
+			doc.text(`Jumlah Negara Dipilih: ${selectedArray.length}`, leftMargin, y);
+			y += lineHeight * 2; // Beri spasi
+
+			doc.setFontSize(14);
+			doc.text('Daftar Negara Dipilih:', leftMargin, y);
+			y += 10;
+			doc.setFontSize(10);
+
+			if (selectedArray.length === 0) {
+				doc.text('(Tidak ada negara yang dipilih)', leftMargin, y);
+				y += lineHeight;
+			} else {
+				for (const country of selectedArray) {
+					if (y > pageBottomMargin) {
+						doc.addPage();
+						y = pageTopMargin;
+						doc.setFontSize(10); // Set ulang font di halaman baru
+					}
+					doc.text(country, leftMargin, y);
+					y += lineHeight;
+				}
+			}
+
+			doc.addPage(); // Mulai di halaman baru
+			y = pageTopMargin;
+			doc.setFontSize(14);
+			doc.text('Daftar Semua Negara:', leftMargin, y);
+			y += 10;
+			doc.setFontSize(10);
+
+			for (const country of allCountries) {
+				if (y > pageBottomMargin) {
+					doc.addPage();
+					y = pageTopMargin;
+					doc.setFontSize(10); // Set ulang font di halaman baru
+				}
+				doc.text(country, leftMargin, y);
+				y += lineHeight;
+			}
+
+			doc.save(`HexaConservation_Report_${Date.now()}.pdf`);
+		} catch (e) {
+			console.error('Gagal membuat PDF:', e);
+		} finally {
+			isGeneratingPdf = false;
+		}
 	}
 
 	onMount(() => {
@@ -58,7 +134,6 @@
 			try {
 				const leafletModule = await import('leaflet');
 				L = leafletModule.default || leafletModule;
-
 				await import('leaflet/dist/leaflet.css');
 
 				delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -87,37 +162,27 @@
 		if (browser && mapInstance && data.geojson) {
 			import('leaflet').then((L) => {
 				if (geoJsonLayer) {
-					// Tambahkan pengecekan 'mapInstance' untuk TypeScript
-					if (mapInstance) {
-						mapInstance.removeLayer(geoJsonLayer);
-					}
+					if (mapInstance) mapInstance.removeLayer(geoJsonLayer);
 				}
-
 				countryLayers = {};
-
 				const layer = L.geoJSON(data.geojson, {
 					style: defaultStyle,
 					onEachFeature: (feature, layer) => {
 						const countryName = feature.properties?.name;
-
 						if (countryName) {
 							layer.bindPopup(countryName);
-
 							const existingLayers = countryLayers;
 							existingLayers[countryName] = layer;
 							countryLayers = existingLayers;
-
 							layer.on('click', () => {
 								toggleCountry(countryName);
 							});
 						}
 					}
 				});
-
 				if (mapInstance) {
 					layer.addTo(mapInstance);
 				}
-
 				geoJsonLayer = layer;
 			});
 		}
@@ -125,14 +190,12 @@
 
 	$effect(() => {
 		if (Object.keys(countryLayers).length === 0) return;
-
 		for (const countryName in countryLayers) {
 			const layer = countryLayers[countryName] as L.Path;
-
 			if (layer && typeof layer.setStyle === 'function') {
 				if (selectedCountries.has(countryName)) {
 					layer.setStyle(highlightStyle);
-					layer.bringToFront(); // Bawa ke depan agar bordernya terlihat
+					layer.bringToFront();
 				} else {
 					layer.setStyle(defaultStyle);
 				}
@@ -156,16 +219,22 @@
 		<div class="flex grow flex-col overflow-hidden">
 			<button
 				type="button"
-				class="mb-4 w-full rounded-md bg-green-600 px-4 py-2 text-white shadow-sm transition hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+				class="mb-4 w-full rounded-md bg-green-600 px-4 py-2 text-white shadow-sm transition hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none
+               disabled:cursor-not-allowed disabled:bg-gray-400"
+				onclick={downloadPDF}
+				disabled={isGeneratingPdf}
 			>
-				Download as PDF (WIP)
+				{#if isGeneratingPdf}
+					Membuat PDF...
+				{:else}
+					Download as PDF
+				{/if}
 			</button>
 
 			<div class="flex-1 overflow-y-auto rounded-md border border-gray-200 bg-white">
 				{#if data.countries && data.countries.length === 0}
 					<p class="p-4 text-center text-sm text-gray-500">Tidak ada negara ditemukan.</p>
 				{/if}
-
 				{#each data.countries as country (country)}
 					<button
 						type="button"
