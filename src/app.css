@@ -1,1 +1,81 @@
 @import 'tailwindcss';
+
+/* Custom theme variables for consistent branding */
+@theme {
+  --brand-primary: theme(colors.teal.600);
+  --brand-secondary: theme(colors.emerald.600);
+  --brand-gradient: linear-gradient(135deg, theme(colors.teal.500), theme(colors.emerald.600));
+  --brand-gradient-hover: linear-gradient(135deg, theme(colors.teal.600), theme(colors.emerald.700));
+
+  /* Custom animations */
+  --animation-pulse-subtle: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom utility classes */
+.brand-gradient {
+  background: var(--brand-gradient);
+}
+
+.brand-gradient-hover:hover {
+  background: var(--brand-gradient-hover);
+}
+
+.text-brand-gradient {
+  background: linear-gradient(135deg, theme(colors.teal.600), theme(colors.emerald.600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Smooth transitions for interactive elements */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: theme(colors.gray.100);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: theme(colors.teal.400);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: theme(colors.teal.500);
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.loading-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    to right,
+    theme(colors.gray.100) 4%,
+    theme(colors.gray.200) 25%,
+    theme(colors.gray.100) 36%
+  );
+  background-size: 1000px 100%;
+}
