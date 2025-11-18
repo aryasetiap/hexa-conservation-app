@@ -2,9 +2,11 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
+	const {
+		data: { user }
+	} = await locals.supabase.auth.getUser();
 
-	if (session) {
+	if (user) {
 		redirect(303, '/map');
 	}
 };
@@ -34,6 +36,7 @@ export const actions: Actions = {
 			});
 		}
 
+		// Berhasil login, catat sesi
 		const user = authData.user;
 		const { error: sessionError } = await locals.supabase.from('user_sessions').insert({
 			user_id: user.id,
@@ -42,7 +45,6 @@ export const actions: Actions = {
 
 		if (sessionError) {
 			console.error('Gagal mencatat sesi:', sessionError.message);
-			// Logout paksa pengguna agar tidak terjadi sesi yang 'setengah jadi'
 			await locals.supabase.auth.signOut();
 			return fail(500, {
 				error: 'Gagal mencatat sesi. Silakan coba lagi.',
