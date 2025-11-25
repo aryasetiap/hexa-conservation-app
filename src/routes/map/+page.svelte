@@ -34,6 +34,10 @@
 		window.location.href = '/logout';
 	}
 
+	function gotoProject(){
+		window.location.href = '/project';
+	}
+
 	function toggleCountry(countryName: string) {
 		const newSet = new Set(selectedCountries);
 		if (newSet.has(countryName)) {
@@ -267,6 +271,15 @@
 					<p class="text-lg font-bold">{selectedCountries.size}</p>
 				</div>
 			</div>
+			
+			<!-- To Projects Page Button -->
+			<button
+				type="button"
+				class="flex w-full items-center justify-center space-x-2 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 focus:outline-none"
+				onclick={gotoProject}
+			>
+				<span>Go to Project</span>
+			</button>
 		</div>
 
 		<!-- Controls Section -->
