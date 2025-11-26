@@ -26,7 +26,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
+	// Action Stage 2
+	buffer: async ({ request, locals }) => {
 		const {
 			data: { user }
 		} = await locals.supabase.auth.getUser();
@@ -101,6 +102,71 @@ export const actions: Actions = {
 				return fail(400, { message: 'Invalid GeoJSON file format. Could not parse.' });
 			}
 			return fail(500, { message: 'An unexpected error occurred on the server.' });
+		}
+	},
+
+	// Action Stage 6
+	process: async ({ request, locals }) => {
+		const {
+			data: { user }
+		} = await locals.supabase.auth.getUser();
+		if (!user) {
+			return fail(401, { message: 'You must be logged in to create a project.' });
+		}
+
+		const formData = await request.formData();
+		const operation = formData.get('operation') as string;
+		const fileA = formData.get('file_a') as File;
+		const fileB = formData.get('file_b') as File;
+
+		if (!operation || !fileA || fileA.size === 0 || !fileB || fileB.size === 0) {
+			return fail(400, { message: 'Operation and both files are required.' });
+		}
+
+		try {
+			const session = await locals.getSession();
+			if (!session) {
+				return fail(401, { message: 'Authentication session expired.' });
+			}
+
+			const headers = new Headers();
+			headers.append('Authorization', `Bearer ${session.access_token}`);
+
+			const response = await fetch(`${PRIVATE_FASTAPI_URL}/process`, {
+				method: 'POST',
+				headers: headers,
+				body: formData
+			});
+
+			if (!response.ok) {
+				const errorBody = await response.json();
+				return fail(response.status, {
+					message: errorBody.detail || 'Processing failed on backend.'
+				});
+			}
+
+			const processedGeoJson = await response.json();
+
+			const { error: dbError } = await locals.supabase.from('projects').insert({
+				user_id: user.id,
+				project_name: `${operation} of ${fileA.name} and ${fileB.name}`,
+				operation_type: operation,
+				original_geojson: null,
+				processed_geojson: processedGeoJson
+			});
+
+			if (dbError) {
+				console.error('Supabase Error:', dbError);
+				return fail(500, { message: 'Failed to save project to database.' });
+			}
+
+			return { success: true, message: `Project '${operation}' created successfully!` };
+		} catch (error) {
+			console.error('Processing Error:', error);
+			if (error instanceof Error) {
+				return fail(500, { message: `An unexpected error occurred: ${error.message}` });
+			}
+			return fail(500, { message: 'An unexpected error occurred.' });
 		}
 	}
 };

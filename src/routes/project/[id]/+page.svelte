@@ -8,11 +8,15 @@
 
     let mapContainer: HTMLElement;
     let mapInstance: L.Map | null = $state(null);
-    let originalLayer: L.GeoJSON | null = $state(null);
-    let bufferedLayer: L.GeoJSON | null = $state(null);
 
-    let showOriginal = $state(true);
-    let showBuffered = $state(true);
+    let primaryLayer: L.GeoJSON | null = $state(null); 
+    let secondaryLayer: L.GeoJSON | null = $state(null); 
+
+    let showPrimary = $state(true);
+    let showSecondary = $state(true);
+
+    let primaryLayerLabel = 'Result Polygon';
+    let secondaryLayerLabel = 'Input Polygon';
 
     function formatDate(dateString: string) {
         return new Date(dateString).toLocaleString('en-GB', {
@@ -41,21 +45,39 @@
                     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(mapInstance);
 
-            if (data.project.original_geojson) {
-                originalLayer = L.geoJSON(data.project.original_geojson as any, {
-                    style: { color: '#3b82f6', weight: 2, opacity: 0.8, fillOpacity: 0.2 }
-                }).addTo(mapInstance);
+            const layers: L.Layer[] = [];
+
+            if (data.project.operation_type === 'buffer') {
+                primaryLayerLabel = 'Buffered Polygon';
+                secondaryLayerLabel = 'Original Polygon';
+
+                if (data.project.original_geojson) {
+                    secondaryLayer = L.geoJSON(data.project.original_geojson as any, {
+                        style: { color: '#3b82f6', weight: 2, opacity: 0.8, fillOpacity: 0.2 }
+                    }).addTo(mapInstance);
+                    layers.push(secondaryLayer);
+                }
+                if (data.project.processed_geojson) {
+                    primaryLayer = L.geoJSON(data.project.processed_geojson as any, {
+                        style: { color: '#10b981', weight: 2, opacity: 0.9, fillOpacity: 0.3 }
+                    }).addTo(mapInstance);
+                    layers.push(primaryLayer);
+                }
+            } else {
+                primaryLayerLabel = `Result: ${data.project.operation_type}`;
+                if (data.project.processed_geojson) {
+                    primaryLayer = L.geoJSON(data.project.processed_geojson as any, {
+                        style: { color: '#8b5cf6', weight: 2, opacity: 0.9, fillOpacity: 0.4 }
+                    }).addTo(mapInstance);
+                    layers.push(primaryLayer);
+                }
             }
 
-            if (data.project.processed_geojson) {
-                bufferedLayer = L.geoJSON(data.project.processed_geojson as any, {
-                    style: { color: '#10b981', weight: 2, opacity: 0.9, fillOpacity: 0.3 }
-                }).addTo(mapInstance);
-            }
-
-            const bounds = new L.FeatureGroup([originalLayer, bufferedLayer].filter(Boolean) as L.Layer[]).getBounds();
-            if (bounds.isValid()) {
-                mapInstance.fitBounds(bounds, { padding: [50, 50] });
+            if (layers.length > 0) {
+                const bounds = new L.FeatureGroup(layers).getBounds();
+                if (bounds.isValid()) {
+                    mapInstance.fitBounds(bounds, { padding: [50, 50] });
+                }
             }
         }
     });
@@ -65,21 +87,21 @@
     });
 
     $effect(() => {
-        if (mapInstance && originalLayer) {
-            if (showOriginal && !mapInstance.hasLayer(originalLayer)) {
-                mapInstance.addLayer(originalLayer);
-            } else if (!showOriginal && mapInstance.hasLayer(originalLayer)) {
-                mapInstance.removeLayer(originalLayer);
+        if (mapInstance && primaryLayer) {
+            if (showPrimary && !mapInstance.hasLayer(primaryLayer)) {
+                mapInstance.addLayer(primaryLayer);
+            } else if (!showPrimary && mapInstance.hasLayer(primaryLayer)) {
+                mapInstance.removeLayer(primaryLayer);
             }
         }
     });
 
     $effect(() => {
-        if (mapInstance && bufferedLayer) {
-            if (showBuffered && !mapInstance.hasLayer(bufferedLayer)) {
-                mapInstance.addLayer(bufferedLayer);
-            } else if (!showBuffered && mapInstance.hasLayer(bufferedLayer)) {
-                mapInstance.removeLayer(bufferedLayer);
+        if (mapInstance && secondaryLayer) {
+            if (showSecondary && !mapInstance.hasLayer(secondaryLayer)) {
+                mapInstance.addLayer(secondaryLayer);
+            } else if (!showSecondary && mapInstance.hasLayer(secondaryLayer)) {
+                mapInstance.removeLayer(secondaryLayer);
             }
         }
     });
@@ -116,7 +138,7 @@
     <main class="flex-1 relative">
         <div
             bind:this={mapContainer}
-            class="h-full w-full pointer-events-none"
+            class="h-full w-full"
             style="min-height: calc(100vh - 85px);"
         ></div>
 
@@ -126,16 +148,20 @@
         >
             <h3 class="font-semibold text-gray-800 mb-3">Layer Controls</h3>
             <div class="space-y-3">
-                <label class="flex items-center space-x-3 cursor-pointer">
-                    <input type="checkbox" bind:checked={showOriginal} class="h-5 w-5 rounded text-blue-500 focus:ring-blue-500" />
-                    <span class="text-sm font-medium text-gray-700">Original Polygon</span>
-                    <div class="ml-auto h-4 w-4 rounded-md border border-blue-600 bg-blue-500/30"></div>
-                </label>
-                <label class="flex items-center space-x-3 cursor-pointer">
-                    <input type="checkbox" bind:checked={showBuffered} class="h-5 w-5 rounded text-emerald-500 focus:ring-emerald-500" />
-                    <span class="text-sm font-medium text-gray-700">Buffered Polygon</span>
-                    <div class="ml-auto h-4 w-4 rounded-md border border-emerald-600 bg-emerald-500/40"></div>
-                </label>
+                {#if primaryLayer}
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" bind:checked={showPrimary} class="h-5 w-5 rounded text-emerald-500 focus:ring-emerald-500" />
+                        <span class="text-sm font-medium text-gray-700 capitalize">{primaryLayerLabel}</span>
+                        <div class="ml-auto h-4 w-4 rounded-md border border-emerald-600 bg-emerald-500/40"></div>
+                    </label>
+                {/if}
+                {#if secondaryLayer}
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" bind:checked={showSecondary} class="h-5 w-5 rounded text-blue-500 focus:ring-blue-500" />
+                        <span class="text-sm font-medium text-gray-700">{secondaryLayerLabel}</span>
+                        <div class="ml-auto h-4 w-4 rounded-md border border-blue-600 bg-blue-500/30"></div>
+                    </label>
+                {/if}
             </div>
         </div>
     </main>

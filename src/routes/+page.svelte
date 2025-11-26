@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100">
+<div class="min-h-screen bg-linear-to-br from-emerald-50 via-teal-50 to-cyan-100">
 	<!-- Background Pattern -->
 	<div class="fixed inset-0 opacity-5">
 		<div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%2314b8a6\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
@@ -7,13 +7,13 @@
 	<div class="relative z-10 container mx-auto px-4 py-16">
 		<!-- Hero Section -->
 		<div class="text-center mb-16">
-			<div class="mx-auto mb-8 h-20 w-20 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-2xl flex items-center justify-center">
+			<div class="mx-auto mb-8 h-20 w-20 rounded-2xl bg-linear-to-br from-teal-500 to-emerald-600 shadow-2xl flex items-center justify-center">
 				<svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 				</svg>
 			</div>
 
-			<h1 class="text-5xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mb-4">
+			<h1 class="text-5xl font-bold bg-linear-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mb-4">
 				Hexa Conservation
 			</h1>
 			<p class="text-xl font-semibold text-gray-700 mb-2">Technical Test Platform</p>
@@ -25,7 +25,7 @@
 		<!-- Main Content Card -->
 		<div class="max-w-4xl mx-auto">
 			<div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-				<div class="bg-gradient-to-r from-teal-500 to-emerald-600 p-8 text-white">
+				<div class="bg-linear-to-r from-teal-500 to-emerald-600 p-8 text-white">
 					<h2 class="text-3xl font-bold mb-2">Welcome to the Challenge</h2>
 					<p class="text-teal-100 text-lg">
 						Interactive GeoJSON Country Mapping Application
@@ -34,7 +34,7 @@
 
 				<div class="p-8">
 					<!-- Status Alert -->
-					<div class="mb-8 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-6">
+					<div class="mb-8 rounded-2xl bg-linear-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-6">
 						<div class="flex items-center space-x-3">
 							<div class="h-12 w-12 rounded-xl bg-emerald-500 flex items-center justify-center">
 								<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@
 					<div class="text-center">
 						<a
 							href="/login"
-							class="inline-flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-200 hover:from-teal-600 hover:to-emerald-700 focus:ring-4 focus:ring-teal-500 focus:ring-opacity-30"
+							class="inline-flex items-center space-x-2 bg-linear-to-r from-teal-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-200 hover:from-teal-600 hover:to-emerald-700 focus:ring-4 focus:ring-teal-500 focus:ring-opacity-30"
 						>
 							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>

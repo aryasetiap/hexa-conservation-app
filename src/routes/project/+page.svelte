@@ -43,14 +43,14 @@
         </div>
 
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <!-- Kolom Kiri: Form Upload -->
-            <div class="lg:col-span-1">
+            <div class="lg:col-span-1 space-y-8">
                 <div class="rounded-2xl bg-white/80 p-6 shadow-lg backdrop-blur-sm border border-white/20">
                     <h2 class="text-lg font-semibold text-gray-800">New Buffer Project</h2>
                     <p class="mb-6 text-sm text-gray-500">Upload a GeoJSON file to start.</p>
 
                     <form
                         method="POST"
+                        action="?/buffer"
                         enctype="multipart/form-data"
                         class="space-y-4"
                         use:enhance={() => {
@@ -150,6 +150,59 @@
                             <p>{form.message}</p>
                         </div>
                     {/if}
+                </div>
+
+                <div class="rounded-2xl bg-white/80 p-6 shadow-lg backdrop-blur-sm border border-white/20">
+                    <h2 class="text-lg font-semibold text-gray-800">Advanced Geospatial Project</h2>
+                    <p class="mb-6 text-sm text-gray-500">Upload two zipped shapefiles to start.</p>
+
+                    <form
+                        method="POST"
+                        action="?/process"
+                        enctype="multipart/form-data"
+                        class="space-y-4"
+                        use:enhance={() => {
+                            isLoading = true;
+                            return async ({ update }) => {
+                                await update({ reset: false });
+                                isLoading = false;
+                                if (form?.success) {
+                                    invalidateAll();
+                                }
+                            };
+                        }}
+                    >
+                        <div>
+                            <label for="operation" class="block text-sm font-medium text-gray-700">Operation</label>
+                            <select id="operation" name="operation" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                                <option value="clip">Clip A with B</option>
+                                <option value="intersect">Intersect A and B</option>
+                                <option value="difference">Difference (A minus B)</option>
+                                <option value="union">Union of A and B</option>
+                                <!-- Opsi Baru -->
+                                <option value="dissolve">Dissolve A</option>
+                                <option value="merge">Merge A and B</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="file_a" class="block text-sm font-medium text-gray-700">Polygon A (.zip)</label>
+                            <input accept=".zip,application/zip" id="file_a" name="file_a" type="file" required class="mt-1 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 file:mr-4 file:cursor-pointer file:border-0 file:bg-teal-50 file:px-4 file:py-2 file:text-teal-700 hover:file:bg-teal-100 focus:outline-none" />
+                        </div>
+
+                        <div>
+                            <label for="file_b" class="block text-sm font-medium text-gray-700">Polygon B (.zip)</label>
+                            <input accept=".zip,application/zip" id="file_b" name="file_b" type="file" required class="mt-1 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 file:mr-4 file:cursor-pointer file:border-0 file:bg-teal-50 file:px-4 file:py-2 file:text-teal-700 hover:file:bg-teal-100 focus:outline-none" />
+                        </div>
+
+                        <button type="submit" disabled={isLoading} class="flex w-full items-center justify-center rounded-xl bg-linear-to-r from-blue-500 to-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:cursor-not-allowed disabled:opacity-60">
+                            {#if isLoading}
+                                Processing...
+                            {:else}
+                                Process Polygons
+                            {/if}
+                        </button>
+                    </form>
                 </div>
             </div>
 
