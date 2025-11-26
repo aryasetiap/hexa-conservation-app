@@ -1,21 +1,19 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-    import type { ActionData } from './$types';
+    import type { ActionData, PageData } from './$types';
+    import { invalidateAll } from '$app/navigation';
 
-    let { form }: { form: ActionData } = $props();
+    let { form, data }: { form: ActionData; data: PageData } = $props();
 
     let files = $state<FileList | null>(null);
     let isLoading = $state(false);
 
-    $effect(() => {
-        if (files) {
-            console.log(files);
-
-            for (const file of files) {
-                console.log(`${file.name}: ${file.size} bytes`);
-            }
-        }
-    });
+    function formatDate(dateString: string) {
+        return new Date(dateString).toLocaleString('en-GB', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        });
+    }
 </script>
 
 <div class="flex min-h-screen bg-linear-to-br from-emerald-50 via-teal-50 to-cyan-100">
@@ -58,8 +56,11 @@
                         use:enhance={() => {
                             isLoading = true;
                             return async ({ update }) => {
-                                await update();
+                                await update({ reset: false }); 
                                 isLoading = false;
+                                if (form?.success) {
+                                    invalidateAll();
+                                }
                             };
                         }}
                     >
@@ -158,28 +159,66 @@
                     <h2 class="text-lg font-semibold text-gray-800">Project List</h2>
                     <p class="mb-6 text-sm text-gray-500">Your past and present projects.</p>
 
-                    <!-- Placeholder untuk daftar proyek -->
-                    <div
-                        class="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50"
-                    >
-                        <div class="text-center">
-                            <svg
-                                class="mx-auto h-12 w-12 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                                ></path>
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">No projects yet</h3>
-                            <p class="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
+                    {#if data.projects && data.projects.length > 0}
+                        <div class="space-y-3">
+                            {#each data.projects as project (project.id)}
+                                <a
+                                    href={`/project/${project.id}`}
+                                    class="block rounded-xl border border-gray-200 bg-white p-4 transition-all duration-200 hover:shadow-md hover:border-teal-400"
+                                >
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-semibold text-gray-800">{project.project_name}</p>
+                                            <p class="text-sm text-gray-500">
+                                                Operation: <span class="font-medium text-teal-700 capitalize"
+                                                    >{project.operation_type}</span
+                                                >
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-500">{formatDate(project.created_at)}</p>
+                                            <svg
+                                                class="mt-2 ml-auto h-5 w-5 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M9 5l7 7-7 7"
+                                                ></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            {/each}
                         </div>
-                    </div>
+                    {:else}
+                        <!-- Placeholder untuk daftar proyek -->
+                        <div
+                            class="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50"
+                        >
+                            <div class="text-center">
+                                <svg
+                                    class="mx-auto h-12 w-12 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                    ></path>
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No projects yet</h3>
+                                <p class="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
+                            </div>
+                        </div>
+                    {/if}
                 </div>
             </div>
         </div>
