@@ -1,36 +1,37 @@
 import { fail, type Actions } from '@sveltejs/kit';
-import fs from 'node:fs/promises';
 
 export const actions: Actions = {
-  default: async ({ request }) => {
-    const formData = await request.formData();
-    const uploadedFile = formData.get('uploadedFile') as File;
+	default: async ({ request, locals }) => {
+		const {
+			data: { user }
+		} = await locals.supabase.auth.getUser();
+		if (!user) {
+			return fail(401, { message: 'You must be logged in to create a project.' });
+		}
 
-    if (!uploadedFile || uploadedFile.size === 0) {
-      return fail(400, { message: 'No file uploaded or file is empty.' });
-    }
+		const formData = await request.formData();
+		const geojsonFile = formData.get('geojsonFile') as File;
+		const bufferValue = formData.get('buffer_value');
 
-    // Basic validation (e.g., file type, size)
-    if (!uploadedFile.type.startsWith('image/')) {
-      return fail(400, { message: 'Only image files are allowed.' });
-    }
+		if (!geojsonFile || geojsonFile.size === 0) {
+			return fail(400, { message: 'No file uploaded or file is empty.' });
+		}
 
-    try {
-      // Create a buffer from the file data
-      const buffer = Buffer.from(await uploadedFile.arrayBuffer());
+		// Validate file type for GeoJSON
+		const allowedTypes = ['application/geo+json', 'application/json'];
+		if (!allowedTypes.includes(geojsonFile.type) && !geojsonFile.name.endsWith('.geojson')) {
+			return fail(400, { message: 'Invalid file type. Please upload a GeoJSON file.' });
+		}
 
-      // Define the path to save the file (e.g., in a 'static/uploads' directory)
-      const uploadDir = 'static/uploads'; // Or a more robust storage solution
-      await fs.mkdir(uploadDir, { recursive: true }); // Ensure directory exists
-      const filePath = `${uploadDir}/${uploadedFile.name}`;
+		if (!bufferValue) {
+			return fail(400, { message: 'Buffer value is required.' });
+		}
 
-      // Write the file to the server's file system
-      await fs.writeFile(filePath, buffer);
+		// TODO (untuk Stage 4):
+		// 1. Panggil API FastAPI '/buffer' dengan 'geojsonFile' dan 'bufferValue'.
+		// 2. Ambil GeoJSON asli dan GeoJSON hasil buffer.
+		// 3. Simpan keduanya ke tabel 'projects' di Supabase.
 
-      return { success: true, message: 'File uploaded successfully!' };
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      return fail(500, { message: 'Failed to upload file.' });
-    }
-  }
+		return { success: true, message: 'File received. Processing will be implemented in Stage 4.' };
+	}
 };

@@ -11,7 +11,7 @@
 	}
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100">
+<div class="flex min-h-screen items-center justify-center bg-linear-to-br from-emerald-50 via-teal-50 to-cyan-100">
 	<!-- Background Pattern -->
 	<div class="fixed inset-0 opacity-10">
 		<div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%2314b8a6\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
@@ -20,12 +20,12 @@
 	<div class="relative z-10 w-full max-w-md">
 		<!-- Logo/Branding Section -->
 		<div class="mb-8 text-center">
-			<div class="mx-auto mb-4 h-16 w-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-xl flex items-center justify-center">
+			<div class="mx-auto mb-4 h-16 w-16 rounded-2xl bg-linear-to-br from-teal-500 to-emerald-600 shadow-xl flex items-center justify-center">
 				<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 				</svg>
 			</div>
-			<h1 class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+			<h1 class="text-3xl font-bold bg-linear-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
 				Hexa Conservation
 			</h1>
 			<p class="mt-2 text-sm font-medium text-gray-600">Technical Test Platform</p>
@@ -33,7 +33,7 @@
 
 		<!-- Login Card -->
 		<div class="overflow-hidden rounded-2xl bg-white/80 shadow-2xl backdrop-blur-sm border border-white/20">
-			<div class="bg-gradient-to-r from-teal-500 to-emerald-600 p-6 text-white">
+			<div class="bg-linear-to-br from-teal-500 to-emerald-600 p-6 text-white">
 				<h2 class="text-xl font-semibold">Welcome Back</h2>
 				<p class="mt-1 text-sm text-teal-50">Sign in to access the country mapping system</p>
 			</div>
@@ -103,7 +103,7 @@
 						<button
 							type="submit"
 							disabled={loading}
-							class="relative flex w-full justify-center rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-teal-600 hover:to-emerald-700 focus:ring-4 focus:ring-teal-500 focus:ring-opacity-30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:from-gray-400 disabled:to-gray-500"
+							class="relative flex w-full justify-center rounded-xl bg-linear-to-r from-teal-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-teal-600 hover:to-emerald-700 focus:ring-4 focus:ring-teal-500 focus:ring-opacity-30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:from-gray-400 disabled:to-gray-500"
 						>
 							{#if loading}
 								<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

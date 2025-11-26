@@ -232,7 +232,7 @@
 	<!-- Sidebar -->
 	<aside id="sidebar" class="fixed lg:relative lg:translate-x-0 -translate-x-full transition-transform duration-300 ease-in-out z-40 flex h-full w-80 max-w-[85vw] lg:max-w-none flex-col bg-white shadow-2xl border-r border-gray-100">
 		<!-- Header Section -->
-		<div class="bg-gradient-to-br from-teal-500 to-emerald-600 p-6 text-white">
+		<div class="bg-linear-to-br from-teal-500 to-emerald-600 p-6 text-white">
 			<div class="flex items-center justify-between mb-4">
 				<div class="flex items-center space-x-3">
 					<div class="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -300,7 +300,7 @@
 				<!-- PDF Download Button -->
 				<button
 					type="button"
-					class="flex w-full items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-emerald-600 hover:to-teal-700 focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:from-gray-400 disabled:to-gray-500"
+					class="flex w-full items-center justify-center space-x-2 rounded-xl bg-linear-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-emerald-600 hover:to-teal-700 focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:from-gray-400 disabled:to-gray-500"
 					onclick={downloadPDF}
 					disabled={isGeneratingPdf || selectedCountries.size === 0}
 				>
@@ -368,7 +368,7 @@
 		<!-- User Info Footer -->
 		<div class="border-t border-gray-100 bg-gray-50/80 p-4">
 			<div class="flex items-center space-x-2">
-				<div class="h-6 w-6 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center">
+				<div class="h-6 w-6 rounded-full bg-linear-to-br from-teal-400 to-emerald-500 flex items-center justify-center">
 					<span class="text-xs font-semibold text-white">
 						{data.session?.user?.email?.charAt(0).toUpperCase() || 'U'}
 					</span>
@@ -386,7 +386,7 @@
 	<!-- Main Content -->
 	<main class="flex-1 relative overflow-hidden">
 		{#if data.error}
-			<div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-red-50 to-rose-100">
+			<div class="flex h-full w-full items-center justify-center bg-linear-to-br from-red-50 to-rose-100">
 				<div class="text-center max-w-md mx-auto p-8">
 					<div class="mx-auto h-16 w-16 rounded-2xl bg-red-100 flex items-center justify-center mb-4">
 						<svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
