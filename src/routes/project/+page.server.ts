@@ -58,8 +58,16 @@ export const actions: Actions = {
 			apiFormData.append('geojson_polygon', geojsonFile);
 			apiFormData.append('buffer_value', bufferValue);
 
+			const session = await locals.getSession();
+			if (!session) {
+				return fail(401, { message: 'Authentication session expired. Please log in again.' });
+			}
+
 			const response = await fetch(`${PRIVATE_FASTAPI_URL}/buffer`, {
 				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${session.access_token}`
+				},
 				body: apiFormData
 			});
 
